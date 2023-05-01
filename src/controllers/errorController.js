@@ -16,8 +16,6 @@ const handleValidationError = (err) => {
 }
 
 export default (err, req, res, next) => {
-  console.log({ ...err, messsage: err.message })
-
   // express errors
   if (err.type === "entity.too.large") err = handlePayloadTooLargeError()
   // zod errors
@@ -28,6 +26,8 @@ export default (err, req, res, next) => {
   if (err.code === "P2023") err = handleCastErrorDB()
   if (err.code === "P2025") err = handleNotFoundErrorDB()
 
+  console.log({ ...err, messsage: err.message })
+  
   // Operational error: send message to client
   if (err.isOperational)
     res.status(err.statusCode).json({
