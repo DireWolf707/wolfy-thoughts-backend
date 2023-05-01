@@ -1,6 +1,7 @@
 import express from "express"
-import helmet from "helmet"
 import passport from "passport"
+import helmet from "helmet"
+import compression from "compression"
 import errorController from "./controllers/errorController"
 import { AppError } from "./utils"
 import { userRouter } from "./routers"
@@ -11,6 +12,9 @@ const app = express()
 // Enable when runing behind a reverse proxy
 app.set("trust proxy", 1)
 // GLOBAL MIDDLEWARES
+// Compression
+app.use(compression())
+// Cors
 app.use(corsMiddleware)
 // Enable when serving static files
 // app.use(express.static(path.join(__dirname, "public")))

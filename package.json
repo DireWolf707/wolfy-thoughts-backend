@@ -29,6 +29,7 @@
     "@google-cloud/storage": "^6.9.5",
     "@prisma/client": "^4.13.0",
     "@sindresorhus/slugify": "^2.2.0",
+    "compression": "^1.7.4",
     "connect-redis": "^7.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
