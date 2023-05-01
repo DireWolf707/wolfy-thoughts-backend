@@ -1,18 +1,18 @@
 import { AppError } from "../utils"
 
-const handlePayloadTooLargeError = () => new AppError("payload too large", 400)
-const handleCastErrorDB = () => new AppError("invalid data", 400)
-const handleNotFoundErrorDB = () => new AppError("record to update not found", 400)
-const handleLongValueErrorDB = () => new AppError("data too long", 400)
+const handlePayloadTooLargeError = () => new AppError("payload too large")
+const handleCastErrorDB = () => new AppError("invalid data")
+const handleNotFoundErrorDB = () => new AppError("record to update not found")
+const handleLongValueErrorDB = () => new AppError("data too long")
 const handleUniqueConstraintErrorDB = (err) => {
   const errors = err.meta.target.map((field) => `${field}:${field} is already in use`)
   const message = errors.join(",")
-  return new AppError(message, 400)
+  return new AppError(message)
 }
 const handleValidationError = (err) => {
   const errors = err.issues.map(({ path, message }) => `${path[0]}:${message}`)
   const message = errors.join(",")
-  return new AppError(message, 400)
+  return new AppError(message)
 }
 
 export default (err, req, res, next) => {
