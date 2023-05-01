@@ -7,7 +7,7 @@ import { redis } from "../configs"
 import { AppError } from "../utils"
 
 export const corsOptions = {
-  origin: [process.env.CLIENT_URL, "https://studio.apollographql.com"],
+  origin: process.env.CLIENT_URL,
   credentials: true,
 }
 
