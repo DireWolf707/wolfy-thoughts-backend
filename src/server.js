@@ -6,11 +6,15 @@ process.on("uncaughtException", (err) => {
 })
 
 import "./configs"
+import http from "http"
 import app from "./app"
+import { setUpSocket } from "./socket"
 
 // Server Init
+const httpServer = setUpSocket(http.createServer(app))
+// Server Start
 const port = process.env.PORT || 3000
-const server = app.listen(port, () => console.log(`App running on port ${port}...`))
+const server = httpServer.listen(port, () => console.log(`App running on port ${port}...`))
 
 // Global Promise Rejection Handler
 process.on("unhandledRejection", (err) => {

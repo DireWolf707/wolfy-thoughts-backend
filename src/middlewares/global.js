@@ -10,7 +10,6 @@ export const corsOptions = {
   origin: process.env.CLIENT_URL,
   credentials: true,
 }
-
 export const corsMiddleware = cors(corsOptions)
 
 export const morganMiddleware = () => {
@@ -43,5 +42,6 @@ export const sessionOptions = {
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   },
 }
-
 export const sessionMiddleware = session(sessionOptions)
+
+export const socketMiddlewareWrapper = (expressMiddleware) => (socket, next) => expressMiddleware(socket.request, {}, next)

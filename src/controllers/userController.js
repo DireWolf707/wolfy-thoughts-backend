@@ -2,8 +2,9 @@ import { catchAsync, slugify } from "../utils"
 import { prisma, storage } from "../configs"
 import { UserInput, ImageInput } from "../validators"
 import { sessionOptions } from "../middlewares/global"
+import { io } from "../socket"
 
-export const getProfile = (req, res) => res.json({ data: req.user || null })
+export const getProfile = (req, res) => res.json({ data: req?.user || null })
 
 export const updateProfile = catchAsync(async (req, res) => {
   const { id } = req.user
@@ -49,8 +50,12 @@ export const deleteAvatar = catchAsync(async (req, res) => {
   res.json({ data: req.session.passport.user })
 })
 
-export const logout = (req, res) =>
+export const logout = (req, res) => {
+  const sessionId = req.session.id
+
   req.session.destroy(() => {
+    io.in(sessionId).disconnectSockets()
     res.clearCookie(sessionOptions.name)
     res.json({ data: null })
   })
+}
