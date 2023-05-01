@@ -4,6 +4,7 @@ import fileupload from "express-fileupload"
 import session from "express-session"
 import RedisStore from "connect-redis"
 import { redis } from "../configs"
+import { AppError } from "../utils"
 
 export const corsOptions = {
   origin: [process.env.CLIENT_URL, "https://studio.apollographql.com"],
@@ -18,6 +19,8 @@ export const morganMiddleware = () => {
 }
 
 export const fileuploadMiddleware = fileupload({
+  limits: { fileSize: 3 * 2 ** 20 },
+  limitHandler: (req, res, next) => next(new AppError("file size must be smaller than 3 MB")),
   useTempFiles: false,
   // tempFileDir: "/tmp/",
 })
