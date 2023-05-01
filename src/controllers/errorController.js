@@ -16,7 +16,7 @@ const handleValidationError = (err) => {
 }
 
 export default (err, req, res, next) => {
-  // console.log(err.code, { ...err })
+  console.log(err)
 
   // express errors
   if (err.type === "entity.too.large") err = handlePayloadTooLargeError()

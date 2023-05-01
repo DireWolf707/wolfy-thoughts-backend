@@ -6,22 +6,20 @@ import { sessionOptions } from "../middlewares/global"
 export const getProfile = (req, res) => res.json({ data: req.user || null })
 
 export const updateProfile = catchAsync(async (req, res) => {
-  const { user } = req.session.passport
-  const { id } = user
+  const { id } = req.user
   const { username } = req.body
-  
+
   if (username) req.body.username = slugify(username)
   // validate input
   const data = UserInput.parse(req.body)
   // update user and session
-  user = await prisma.user.update({ data, where: { id } })
+  req.session.passport.user = await prisma.user.update({ data, where: { id } })
 
-  res.json({ data: user })
+  res.json({ data: req.session.passport.user })
 })
 
 export const updateAvatar = catchAsync(async (req, res) => {
-  const { user } = req.session.passport
-  const { id, avatar } = user
+  const { id, avatar } = req.user
 
   // validate image
   const image = ImageInput(req?.files?.file)
@@ -31,14 +29,13 @@ export const updateAvatar = catchAsync(async (req, res) => {
   await file.save(image.data)
   await file.makePublic()
   // update user and session (write)
-  if (!avatar) user = await prisma.user.update({ data: { avatar: file.publicUrl() }, where: { id } })
+  if (!avatar) req.session.passport.user = await prisma.user.update({ data: { avatar: file.publicUrl() }, where: { id } })
 
-  res.json({ data: user })
+  res.json({ data: req.session.passport.user })
 })
 
 export const deleteAvatar = catchAsync(async (req, res) => {
-  const { user } = req.session.passport
-  const { id, avatar } = user
+  const { id, avatar } = req.user
 
   if (avatar) {
     // remove avatar
@@ -46,10 +43,10 @@ export const deleteAvatar = catchAsync(async (req, res) => {
     const file = storage.file(filename)
     await file.delete({ ignoreNotFound: true })
     // update user
-    user = await prisma.user.update({ data: { avatar: null }, where: { id } })
+    req.session.passport.user = await prisma.user.update({ data: { avatar: null }, where: { id } })
   }
 
-  res.json({ data: user })
+  res.json({ data: req.session.passport.user })
 })
 
 export const logout = (req, res) =>
