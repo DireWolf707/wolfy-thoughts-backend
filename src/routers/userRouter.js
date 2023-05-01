@@ -12,7 +12,7 @@ router.get(
     failureRedirect: process.env.CLIENT_URL + "/500",
   })
 )
-router.post("/logout", logout)
+router.post("/logout", isAuthenticated, logout)
 router.get("/me", getProfile)
 router.post("/profile", isAuthenticated, updateProfile)
 router.route("/avatar").post(isAuthenticated, updateAvatar).delete(isAuthenticated, deleteAvatar)
