@@ -1,17 +1,52 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filteredRelationCount"]
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_POOL_URL")
-  directUrl         = env("DATABASE_DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_POOL_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
 }
 
 model User {
-  id       String  @id @default(uuid()) @db.Uuid
-  email    String  @unique
-  name     String  @db.VarChar(200)
-  username String  @unique @db.VarChar(200)
+  id       String    @id @default(uuid()) @db.Uuid
+  email    String    @unique
+  name     String    @db.VarChar(200)
+  username String    @unique @db.VarChar(200)
   avatar   String?
+  likes    Like[]
+  comments Comment[]
+  posts    Post[]
+}
+
+model Post {
+  id        String    @id @default(uuid()) @db.Uuid
+  title     String    @db.VarChar(80)
+  content   String    @db.VarChar(200)
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @db.Uuid
+  likes     Like[]
+  comments  Comment[]
+}
+
+model Like {
+  id     Int    @id @default(autoincrement()) @db.Integer
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String @db.Uuid
+
+  @@unique([userId, postId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement()) @db.Integer
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String   @db.Uuid
+  content   String   @db.VarChar(200)
+  createdAt DateTime @default(now()) @db.Timestamptz()
 }
