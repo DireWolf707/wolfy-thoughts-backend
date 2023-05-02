@@ -2,7 +2,7 @@ import { AppError } from "../utils"
 
 const handlePayloadTooLargeError = () => new AppError("payload too large")
 const handleCastErrorDB = () => new AppError("invalid data")
-const handleNotFoundErrorDB = () => new AppError("record to update not found")
+const handleNotFoundErrorDB = (err) => new AppError(err.meta.cause.replace(".",""))
 const handleLongValueErrorDB = () => new AppError("data too long")
 const handleUniqueConstraintErrorDB = (err) => {
   const errors = err.meta.target.map((field) => `${field}:${field} is already in use`)
@@ -24,7 +24,7 @@ export default (err, req, res, next) => {
   if (err.code === "P2000") err = handleLongValueErrorDB()
   if (err.code === "P2002") err = handleUniqueConstraintErrorDB(err)
   if (err.code === "P2023") err = handleCastErrorDB()
-  if (err.code === "P2025") err = handleNotFoundErrorDB()
+  if (err.code === "P2025") err = handleNotFoundErrorDB(err)
 
   console.log({ ...err, messsage: err.message })
   
