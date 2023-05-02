@@ -2,6 +2,7 @@ import passport from "passport"
 import { Server } from "socket.io"
 import { sessionMiddleware, socketMiddlewareWrapper, corsOptions } from "./middlewares/global"
 import { isAuthenticated } from "./middlewares/auth"
+import { redis } from "./configs"
 
 export let io
 
@@ -18,6 +19,15 @@ export const setUpSocket = (httpServer) => {
   io.on("connection", (socket) => {
     console.log(`new connection: ${socket.request.user.email}`)
     socket.join(socket.request.session.id) // for disconnecting while logging out
+
+    socket.on("sub_post", async ({ postId }, cb) => {
+      const postKey = `post:${postId}`
+      const metadata = await redis.hGetAll(postKey)
+      socket.join(postKey)
+      cb(metadata)
+    })
+
+    socket.on("unsub_post", ({ postId }) => socket.leave(`post:${postId}`))
 
     // socket.on("disconnecting", () => console.log("disconnecting"))
     socket.on("disconnect", () => console.log("disconnected"))
