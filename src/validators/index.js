@@ -18,7 +18,6 @@ export const UserSignupInput = UserInput.extend({
 })
 
 export const PostInput = z.object({
-  title: z.string().trim().min(2).max(80),
   content: z.string().trim().min(2).max(200),
 })
 
