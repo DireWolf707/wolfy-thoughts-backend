@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === "development" ? ["query", "info", "warn", "error"] : undefined,
+  log: process.env.DEBUG ? ["query", "info", "warn", "error"] : undefined,
   datasources: { db: { url: process.env.DATABASE_POOL_URL } },
 })
 
