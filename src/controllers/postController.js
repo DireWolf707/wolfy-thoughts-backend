@@ -54,7 +54,7 @@ export const likePost = catchAsync(async (req, res) => {
 
   const postKey = `post:${postId}`
   const likes = await redis.hIncrBy(postKey, "likes", 1)
-  io.in(postKey).emit("likes", { likes, postId })
+  io.in(postKey).emit(postKey + ":likes", likes)
 
   res.end()
 })
@@ -67,7 +67,7 @@ export const unLikePost = catchAsync(async (req, res) => {
 
   const postKey = `post:${postId}`
   const likes = await redis.hIncrBy(postKey, "likes", -1)
-  io.in(postKey).emit("likes", { likes, postId })
+  io.in(postKey).emit(postKey + ":likes", likes)
 
   res.end()
 })
@@ -81,7 +81,7 @@ export const createComment = catchAsync(async (req, res) => {
 
   const postKey = `post:${postId}`
   const comments = await redis.hIncrBy(postKey, "comments", 1)
-  io.in(postKey).emit("comments", { comments, postId })
+  io.in(postKey).emit(postKey + ":comments", comments)
 
   res.json({ data: comment })
 })
