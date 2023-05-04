@@ -4,24 +4,15 @@ import { PostInput, CommentInput } from "../validators"
 import { io } from "../socket"
 
 export const getFeed = catchAsync(async (req, res) => {
-  const { cursor } = req.query
-  const query = {
-    take: 10,
+  const posts = await prisma.post.findMany({
     include: {
       user: { select: { username: true, avatar: true } },
       _count: { select: { likes: { where: { userId: req.user.id } } } },
     },
     orderBy: { createdAt: "desc" },
-  }
-  if (cursor) {
-    console.log("ehheh", cursor)
-    Object.assign(query, { skip: 1, cursor: { id: cursor } })
-  }
+  })
 
-  const posts = await prisma.post.findMany(query)
-  const nextCursor = posts[posts.length - 1]?.id
-
-  res.json({ data: posts, cursor: nextCursor })
+  res.json({ data: posts })
 })
 
 export const getPost = catchAsync(async (req, res) => {
