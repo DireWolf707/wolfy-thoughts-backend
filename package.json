@@ -1,5 +1,5 @@
 {
-  "name": "random-thoughts-backend",
+  "name": "wolfy-thoughts-backend",
   "private": true,
   "version": "1.0.0",
   "main": "server.js",
